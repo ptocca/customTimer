@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Custom Timer</h1>
+        
+        <div class="settings">
+            <div class="input-group">
+                <label for="interval">Short Beep Interval (seconds):</label>
+                <input type="number" id="interval" min="1" max="300" value="1" class="input-field">
+            </div>
+            
+            <div class="input-group">
+                <label for="beepCount">Beeps Before Long Beep:</label>
+                <input type="number" id="beepCount" min="1" max="20" value="10" class="input-field">
+            </div>
+
+            <div class="input-group">
+                <label for="countdown">Initial Countdown (seconds, 0 = none):</label>
+                <input type="number" id="countdown" min="0" max="300" value="0" class="input-field">
+            </div>
+        </div>
+
+        <div class="timer-display">
+            <div class="timer-text">Ready</div>
+            <div class="stats">
+                <p>Elapsed Time: <span id="elapsedTime">00:00</span></p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn" class="btn btn-primary">Start</button>
+            <button id="stopBtn" class="btn btn-secondary" disabled>Stop</button>
+            <button id="resetBtn" class="btn btn-reset">Reset</button>
+        </div>
+
+        <div class="info">
+            <p>The timer will beep every N seconds, and after K beeps, it will produce a longer beep.</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
