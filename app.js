@@ -7,10 +7,7 @@ class CustomTimer {
         this.elapsedSeconds = 0;
         this.hasStarted = false;
         this.isCountingDown = false;
-        
-        // Audio context for Web Audio API
         this.audioContext = null;
-        
         this.setupElements();
         this.setupEventListeners();
     }
@@ -22,14 +19,39 @@ class CustomTimer {
         this.startBtn = document.getElementById('startBtn');
         this.stopBtn = document.getElementById('stopBtn');
         this.resetBtn = document.getElementById('resetBtn');
-        this.timerDisplay = document.querySelector('.timer-text');
+        this.timerDisplay = document.getElementById('timerState');
         this.elapsedTimeDisplay = document.getElementById('elapsedTime');
+        this.stepperGroups = document.querySelectorAll('.stepper-group');
     }
 
     setupEventListeners() {
         this.startBtn.addEventListener('click', () => this.start());
         this.stopBtn.addEventListener('click', () => this.stop());
         this.resetBtn.addEventListener('click', () => this.reset());
+
+        document.querySelectorAll('.stepper-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(btn.dataset.target);
+                const delta = parseInt(btn.dataset.delta);
+                const min = parseInt(input.min);
+                const max = parseInt(input.max);
+                const newVal = Math.min(max, Math.max(min, parseInt(input.value) + delta));
+                input.value = newVal;
+            });
+        });
+    }
+
+    setInputsDisabled(disabled) {
+        this.intervalInput.disabled = disabled;
+        this.beepCountInput.disabled = disabled;
+        this.countdownInput.disabled = disabled;
+        this.stepperGroups.forEach(group => {
+            if (disabled) {
+                group.classList.add('disabled');
+            } else {
+                group.classList.remove('disabled');
+            }
+        });
     }
 
     start() {
@@ -37,37 +59,31 @@ class CustomTimer {
 
         this.startBtn.disabled = true;
         this.stopBtn.disabled = false;
-        this.intervalInput.disabled = true;
-        this.beepCountInput.disabled = true;
-        this.countdownInput.disabled = true;
+        this.setInputsDisabled(true);
 
         const countdownDuration = parseInt(this.countdownInput.value);
 
         if (countdownDuration > 0) {
-            // Start countdown phase
             this.isCountingDown = true;
             this.startCountdown(countdownDuration);
         } else {
-            // Skip countdown and start timer immediately
             this.startTimer();
         }
     }
 
     startCountdown(duration) {
         let remaining = duration;
-        this.timerDisplay.textContent = remaining;
-        
-        // Play first countdown beep
+        this.timerDisplay.textContent = 'Get Ready';
+        this.elapsedTimeDisplay.textContent = remaining;
         this.playCountdownBeep();
 
         this.countdownInterval = setInterval(() => {
             remaining--;
-            this.timerDisplay.textContent = remaining;
-            
+            this.elapsedTimeDisplay.textContent = remaining;
+
             if (remaining > 0) {
                 this.playCountdownBeep();
             } else {
-                // Countdown complete, start the actual timer
                 clearInterval(this.countdownInterval);
                 this.isCountingDown = false;
                 this.startTimer();
@@ -78,35 +94,32 @@ class CustomTimer {
     startTimer() {
         this.isRunning = true;
 
-        const interval = parseInt(this.intervalInput.value) * 1000; // Convert to milliseconds
+        const interval = parseInt(this.intervalInput.value) * 1000;
         let beepCounter = 0;
-        
-        // If resuming, calculate the new start time based on elapsed seconds
+
         if (this.hasStarted) {
             this.startTime = Date.now() - (this.elapsedSeconds * 1000);
         } else {
             this.startTime = Date.now();
             this.hasStarted = true;
         }
-        
-        // Play long beep to signal start of elapsed time
+
+        this.elapsedTimeDisplay.classList.add('running');
+
         this.playLongBeep();
         beepCounter++;
         this.updateDisplay();
 
-        // Set up repeating beeps
         this.timerInterval = setInterval(() => {
             if (this.isRunning) {
                 const K = parseInt(this.beepCountInput.value);
-                
+
                 if (beepCounter % K === 0) {
-                    // Play long beep
                     this.playLongBeep();
                 } else {
-                    // Play short beep
                     this.playShortBeep();
                 }
-                
+
                 beepCounter++;
                 this.updateDisplay();
             }
@@ -116,19 +129,17 @@ class CustomTimer {
     stop() {
         this.isRunning = false;
         clearInterval(this.timerInterval);
-        
+
         if (this.isCountingDown) {
             this.isCountingDown = false;
             clearInterval(this.countdownInterval);
         }
-        
+
         this.startBtn.disabled = false;
         this.stopBtn.disabled = true;
-        this.intervalInput.disabled = false;
-        this.beepCountInput.disabled = false;
-        this.countdownInput.disabled = false;
-        
-        // Update button text to "Continue"
+        this.setInputsDisabled(false);
+
+        this.elapsedTimeDisplay.classList.remove('running');
         this.startBtn.textContent = 'Continue';
         this.timerDisplay.textContent = 'Paused';
     }
@@ -136,124 +147,73 @@ class CustomTimer {
     reset() {
         this.isRunning = false;
         this.isCountingDown = false;
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-        }
-        if (this.countdownInterval) {
-            clearInterval(this.countdownInterval);
-        }
-        
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        if (this.countdownInterval) clearInterval(this.countdownInterval);
+
         this.elapsedSeconds = 0;
         this.hasStarted = false;
         this.startBtn.disabled = false;
         this.stopBtn.disabled = true;
-        this.intervalInput.disabled = false;
-        this.beepCountInput.disabled = false;
-        this.countdownInput.disabled = false;
-        
-        // Reset button text to "Start"
+        this.setInputsDisabled(false);
+
+        this.elapsedTimeDisplay.classList.remove('running');
+        this.elapsedTimeDisplay.textContent = '00:00';
         this.startBtn.textContent = 'Start';
-        this.updateDisplay();
         this.timerDisplay.textContent = 'Ready';
     }
 
     playShortBeep() {
         try {
-            if (!this.audioContext) {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
+            if (!this.audioContext) this.audioContext = new (window.AudioContext || /** @type {any} */ (window).webkitAudioContext)();
             const ctx = this.audioContext;
             const now = ctx.currentTime;
-            
-            // Create a short beep: 600Hz frequency, 100ms duration
-            const frequency = 600;
-            const duration = 0.1; // 100ms
-            
             const oscillator = ctx.createOscillator();
             const gainNode = ctx.createGain();
-            
             oscillator.connect(gainNode);
             gainNode.connect(ctx.destination);
-            
-            oscillator.frequency.value = frequency;
+            oscillator.frequency.value = 600;
             oscillator.type = 'sine';
-            
-            // Set volume (0.3 = 30% to avoid too loud)
             gainNode.gain.setValueAtTime(0.3, now);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
-            
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
             oscillator.start(now);
-            oscillator.stop(now + duration);
-        } catch (e) {
-            console.error('Error playing short beep:', e);
-        }
+            oscillator.stop(now + 0.1);
+        } catch (e) { console.error('Error playing short beep:', e); }
     }
 
     playLongBeep() {
         try {
-            if (!this.audioContext) {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
+            if (!this.audioContext) this.audioContext = new (window.AudioContext || /** @type {any} */ (window).webkitAudioContext)();
             const ctx = this.audioContext;
             const now = ctx.currentTime;
-            
-            // Create a long beep: 800Hz frequency, 300ms duration
-            const frequency = 800;
-            const duration = 0.3; // 300ms
-            
             const oscillator = ctx.createOscillator();
             const gainNode = ctx.createGain();
-            
             oscillator.connect(gainNode);
             gainNode.connect(ctx.destination);
-            
-            oscillator.frequency.value = frequency;
+            oscillator.frequency.value = 800;
             oscillator.type = 'sine';
-            
-            // Set volume
             gainNode.gain.setValueAtTime(0.3, now);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
-            
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
             oscillator.start(now);
-            oscillator.stop(now + duration);
-        } catch (e) {
-            console.error('Error playing long beep:', e);
-        }
+            oscillator.stop(now + 0.3);
+        } catch (e) { console.error('Error playing long beep:', e); }
     }
 
     playCountdownBeep() {
         try {
-            if (!this.audioContext) {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
+            if (!this.audioContext) this.audioContext = new (window.AudioContext || /** @type {any} */ (window).webkitAudioContext)();
             const ctx = this.audioContext;
             const now = ctx.currentTime;
-            
-            // Create a countdown beep: 500Hz frequency, 80ms duration
-            const frequency = 500;
-            const duration = 0.08; // 80ms
-            
             const oscillator = ctx.createOscillator();
             const gainNode = ctx.createGain();
-            
             oscillator.connect(gainNode);
             gainNode.connect(ctx.destination);
-            
-            oscillator.frequency.value = frequency;
+            oscillator.frequency.value = 500;
             oscillator.type = 'sine';
-            
-            // Set volume
             gainNode.gain.setValueAtTime(0.3, now);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
-            
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
             oscillator.start(now);
-            oscillator.stop(now + duration);
-        } catch (e) {
-            console.error('Error playing countdown beep:', e);
-        }
+            oscillator.stop(now + 0.08);
+        } catch (e) { console.error('Error playing countdown beep:', e); }
     }
 
     updateDisplay() {
@@ -261,14 +221,12 @@ class CustomTimer {
             this.elapsedSeconds = Math.floor((Date.now() - this.startTime) / 1000);
             this.timerDisplay.textContent = 'Running';
         }
-        
         const minutes = Math.floor(this.elapsedSeconds / 60);
         const seconds = this.elapsedSeconds % 60;
         this.elapsedTimeDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 }
 
-// Initialize the timer when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     new CustomTimer();
 });

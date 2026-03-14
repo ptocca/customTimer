@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Dark background rounded rect -->
+  <rect width="512" height="512" rx="96" ry="96" fill="#0f0f13"/>
+
+  <!-- Outer amber ring -->
+  <circle cx="256" cy="272" r="164" fill="none" stroke="#d4a843" stroke-width="12"/>
+
+  <!-- Tick marks (12 major ticks) -->
+  <g stroke="#d4a843" stroke-linecap="round">
+    <!-- 12 o'clock -->
+    <line x1="256" y1="120" x2="256" y2="144" stroke-width="8"/>
+    <!-- 1 o'clock -->
+    <line x1="338" y1="143" x2="325" y2="163" stroke-width="5" opacity="0.5"/>
+    <!-- 2 o'clock -->
+    <line x1="393" y1="199" x2="376" y2="208" stroke-width="5" opacity="0.5"/>
+    <!-- 3 o'clock -->
+    <line x1="420" y1="272" x2="396" y2="272" stroke-width="8"/>
+    <!-- 4 o'clock -->
+    <line x1="393" y1="345" x2="376" y2="336" stroke-width="5" opacity="0.5"/>
+    <!-- 5 o'clock -->
+    <line x1="338" y1="401" x2="325" y2="381" stroke-width="5" opacity="0.5"/>
+    <!-- 6 o'clock -->
+    <line x1="256" y1="424" x2="256" y2="400" stroke-width="8"/>
+    <!-- 7 o'clock -->
+    <line x1="174" y1="401" x2="187" y2="381" stroke-width="5" opacity="0.5"/>
+    <!-- 8 o'clock -->
+    <line x1="119" y1="345" x2="136" y2="336" stroke-width="5" opacity="0.5"/>
+    <!-- 9 o'clock -->
+    <line x1="92" y1="272" x2="116" y2="272" stroke-width="8"/>
+    <!-- 10 o'clock -->
+    <line x1="119" y1="199" x2="136" y2="208" stroke-width="5" opacity="0.5"/>
+    <!-- 11 o'clock -->
+    <line x1="174" y1="143" x2="187" y2="163" stroke-width="5" opacity="0.5"/>
+  </g>
+
+  <!-- Center filled circle -->
+  <circle cx="256" cy="272" r="10" fill="#d4a843"/>
+
+  <!-- Minute hand (pointing to ~12) -->
+  <line x1="256" y1="272" x2="256" y2="152" stroke="#d4a843" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Hour hand (pointing to ~9/10) -->
+  <line x1="256" y1="272" x2="176" y2="222" stroke="#d4a843" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+
+  <!-- Crown / stem at top -->
+  <rect x="236" y="88" width="40" height="20" rx="6" fill="#d4a843"/>
+  <rect x="248" y="76" width="16" height="16" rx="4" fill="#d4a843"/>
+
+  <!-- Lugs -->
+  <rect x="220" y="100" width="16" height="8" rx="3" fill="#d4a843" opacity="0.6"/>
+  <rect x="276" y="100" width="16" height="8" rx="3" fill="#d4a843" opacity="0.6"/>
+</svg>
