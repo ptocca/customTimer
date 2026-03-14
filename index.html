@@ -3,76 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0f0f13">
+    <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Timer">
-    <meta name="mobile-web-app-capable" content="yes">
     <title>Custom Timer</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app">
-        <header class="app-header">
-            <div class="app-title">
-                <span class="title-icon">◉</span>
-                <h1>Timer</h1>
+    <div class="container">
+        <h1>Custom Timer</h1>
+        
+        <div class="settings">
+            <div class="input-group">
+                <label for="interval">Short Beep Interval (seconds):</label>
+                <input type="number" id="interval" min="1" max="300" value="1" class="input-field">
             </div>
-        </header>
+            
+            <div class="input-group">
+                <label for="beepCount">Beeps Before Long Beep:</label>
+                <input type="number" id="beepCount" min="1" max="20" value="10" class="input-field">
+            </div>
 
-        <div class="timer-display">
-            <div class="timer-state" id="timerState">Ready</div>
-            <div class="elapsed-label">elapsed</div>
-            <div class="elapsed-time" id="elapsedTime">00:00</div>
+            <div class="input-group">
+                <label for="countdown">Initial Countdown (seconds, 0 = none):</label>
+                <input type="number" id="countdown" min="0" max="300" value="0" class="input-field">
+            </div>
         </div>
 
-        <div class="settings">
-            <div class="stepper-group">
-                <div class="stepper-info">
-                    <span class="stepper-label">Beep Interval</span>
-                    <span class="stepper-unit">seconds</span>
-                </div>
-                <div class="stepper-controls">
-                    <button class="stepper-btn" data-target="interval" data-delta="-1">−</button>
-                    <input type="number" id="interval" min="1" max="300" value="1">
-                    <button class="stepper-btn" data-target="interval" data-delta="1">+</button>
-                </div>
-            </div>
-
-            <div class="stepper-group">
-                <div class="stepper-info">
-                    <span class="stepper-label">Beeps Per Long</span>
-                    <span class="stepper-unit">count</span>
-                </div>
-                <div class="stepper-controls">
-                    <button class="stepper-btn" data-target="beepCount" data-delta="-1">−</button>
-                    <input type="number" id="beepCount" min="1" max="20" value="10">
-                    <button class="stepper-btn" data-target="beepCount" data-delta="1">+</button>
-                </div>
-            </div>
-
-            <div class="stepper-group">
-                <div class="stepper-info">
-                    <span class="stepper-label">Countdown</span>
-                    <span class="stepper-unit">sec · 0 = off</span>
-                </div>
-                <div class="stepper-controls">
-                    <button class="stepper-btn" data-target="countdown" data-delta="-1">−</button>
-                    <input type="number" id="countdown" min="0" max="300" value="0">
-                    <button class="stepper-btn" data-target="countdown" data-delta="1">+</button>
-                </div>
+        <div class="timer-display">
+            <div class="timer-text">Ready</div>
+            <div class="stats">
+                <p>Elapsed Time: <span id="elapsedTime">00:00</span></p>
             </div>
         </div>
 
         <div class="controls">
-            <button id="startBtn" class="btn btn-start">Start</button>
-            <button id="stopBtn" class="btn btn-stop" disabled>Stop</button>
+            <button id="startBtn" class="btn btn-primary">Start</button>
+            <button id="stopBtn" class="btn btn-secondary" disabled>Stop</button>
             <button id="resetBtn" class="btn btn-reset">Reset</button>
+        </div>
+
+        <div class="info">
+            <p>The timer will beep every N seconds, and after K beeps, it will produce a longer beep.</p>
         </div>
     </div>
 
@@ -80,9 +55,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => {
-                    console.warn('Service worker registration failed:', err);
-                });
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
             });
         }
     </script>
