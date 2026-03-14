@@ -1,11 +1,12 @@
 const CACHE_NAME = 'custom-timer-v1';
+const BASE = self.registration.scope;
 const ASSETS = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/app.js',
-    '/manifest.json',
-    '/icon.svg'
+    BASE,
+    BASE + 'index.html',
+    BASE + 'styles.css',
+    BASE + 'app.js',
+    BASE + 'manifest.json',
+    BASE + 'icon.svg'
 ];
 
 self.addEventListener('install', event => {
