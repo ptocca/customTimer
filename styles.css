@@ -11,7 +11,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 5px;
 }
 
 .container {
@@ -39,6 +39,10 @@ h1 {
 
 .input-group {
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 }
 
 .input-group:last-child {
@@ -46,20 +50,20 @@ h1 {
 }
 
 label {
-    display: block;
     color: #555;
     font-weight: 600;
-    margin-bottom: 8px;
     font-size: 14px;
 }
 
 .input-field {
-    width: 100%;
+    width: 60px;
     padding: 12px;
+    text-align: right;
     border: 2px solid #ddd;
     border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.3s;
+    flex-shrink: 0;
 }
 
 .input-field:focus {
@@ -108,10 +112,10 @@ label {
 .btn {
     flex: 1;
     min-width: 120px;
-    padding: 14px;
+    padding: 22px;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
@@ -178,17 +182,21 @@ label {
 
 /* Mobile responsiveness */
 @media (max-width: 480px) {
+    body {
+        align-items: flex-start;
+    }
+
     .container {
         padding: 20px;
     }
 
     h1 {
-        font-size: 24px;
+        font-size: 44px;
         margin-bottom: 20px;
     }
 
     .timer-text {
-        font-size: 36px;
+        font-size: 44px;
     }
 
     .timer-display {
@@ -197,12 +205,12 @@ label {
 
     .btn {
         min-width: 100px;
-        padding: 12px;
+        padding: 24px;
         font-size: 14px;
     }
 
     label {
-        font-size: 13px;
+        font-size: 18px;
     }
 
     .input-field {
